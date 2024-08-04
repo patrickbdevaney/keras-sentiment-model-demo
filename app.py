@@ -6,9 +6,16 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
 
 # Load the model and tokenizer
-model = load_model('sentiment_analysis_model.h5')
-with open('tokenizer.pickle', 'rb') as handle:
-    tokenizer = pickle.load(handle)
+try:
+    model = load_model('sentiment_analysis_model.h5')
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+
+try:
+    with open('tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
+except Exception as e:
+    st.error(f"Error loading tokenizer: {e}")
 
 # Define a function to predict the sentiment of input text
 def predict_sentiment(text):
@@ -28,5 +35,8 @@ def predict_sentiment(text):
 st.title('Sentiment Analysis')
 comment = st.text_area('Enter your comment:')
 if st.button('Analyze Sentiment'):
-    sentiment = predict_sentiment(comment)
-    st.write(f'Sentiment: {sentiment}')
+    if 'model' in globals() and 'tokenizer' in globals():
+        sentiment = predict_sentiment(comment)
+        st.write(f'Sentiment: {sentiment}')
+    else:
+        st.error("Model or tokenizer not loaded properly.")
