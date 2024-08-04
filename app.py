@@ -5,7 +5,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
 
 # Load the model and tokenizer
-model = load_model('sentiment_analysis_model.keras')
+model = load_model('sentiment_analysis_model.h5')
 tokenizer = joblib.load('tokenizer.pickle')
 
 def predict_sentiment(comment):
