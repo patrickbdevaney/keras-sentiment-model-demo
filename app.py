@@ -1,17 +1,21 @@
 import streamlit as st
 import joblib
+import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-import numpy as np
+import pickle
 
 # Load the model and tokenizer
 model = load_model('sentiment_analysis_model.h5')
-tokenizer = joblib.load('tokenizer.pickle')
+with open('tokenizer.pickle', 'rb') as handle:
+    tokenizer = pickle.load(handle)
 
-def predict_sentiment(comment):
+# Define a function to predict the sentiment of input text
+def predict_sentiment(text):
     # Tokenize and pad the input text
-    text_sequence = tokenizer.texts_to_sequences([comment])
+    text_sequence = tokenizer.texts_to_sequences([text])
     text_sequence = pad_sequences(text_sequence, maxlen=100)
+
     # Make a prediction using the trained model
     predicted_rating = model.predict(text_sequence)[0]
     if np.argmax(predicted_rating) == 0:
