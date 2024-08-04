@@ -1,25 +1,17 @@
-from flask import Flask, request, jsonify, render_template
+import streamlit as st
 import joblib
-import numpy as np
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+import numpy as np
 
-# Load your sentiment analysis model and tokenizer
+# Load the model and tokenizer
 model = load_model('sentiment_analysis_model.keras')
 tokenizer = joblib.load('tokenizer.pickle')
 
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-# Define a function to predict the sentiment of input text
-def predict_sentiment(text):
+def predict_sentiment(comment):
     # Tokenize and pad the input text
-    text_sequence = tokenizer.texts_to_sequences([text])
+    text_sequence = tokenizer.texts_to_sequences([comment])
     text_sequence = pad_sequences(text_sequence, maxlen=100)
-
     # Make a prediction using the trained model
     predicted_rating = model.predict(text_sequence)[0]
     if np.argmax(predicted_rating) == 0:
@@ -29,12 +21,8 @@ def predict_sentiment(text):
     else:
         return 'Positive'
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.json
-    comment = data['comment']
+st.title('Sentiment Analysis')
+comment = st.text_area('Enter your comment:')
+if st.button('Analyze Sentiment'):
     sentiment = predict_sentiment(comment)
-    return jsonify({'sentiment': sentiment})
-
-if __name__ == '__main__':
-    app.run(debug=False)
+    st.write(f'Sentiment: {sentiment}')
