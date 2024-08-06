@@ -17,13 +17,13 @@ try:
 except Exception as e:
     st.error(f"Error loading tokenizer: {e}")
 
-# Define a function to predict the sentiment of input text
+
 def predict_sentiment(text):
-    # Tokenize and pad the input text
+ 
     text_sequence = tokenizer.texts_to_sequences([text])
     text_sequence = pad_sequences(text_sequence, maxlen=100)
 
-    # Make a prediction using the trained model
+    
     predicted_rating = model.predict(text_sequence)[0]
     if np.argmax(predicted_rating) == 0:
         return 'Negative'
